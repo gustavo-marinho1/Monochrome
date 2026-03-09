@@ -1,7 +1,7 @@
-import pool from "../config/db.js";
+import pool from "../../config/db.js";
 import bcrypt from "bcrypt";
-import { generateToken } from "../utils/token.js";
-import type { User } from "../models/user.js";
+import { generateToken } from "../../utils/token.js";
+import type { User } from "../user/user.model.js";
 
 async function serviceLogin(email: string, password: string) {
   const users = await pool.query("SELECT * FROM users WHERE email = $1", [email]);

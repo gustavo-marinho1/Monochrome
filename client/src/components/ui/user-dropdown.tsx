@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, ShoppingBag, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Container } from '../layout/container';
 import { logout } from '../../services/logout';
+import { ButtonHeaderDropDown } from './buttons-header';
 
 interface Props {
   children: React.ReactNode
@@ -24,6 +25,16 @@ const UserDropdown = ({children}: Props) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleProfile = () => {
+    setIsOpen(false);
+    navigate("/account?tab=profile");
+  }
+
+  const handleOrders = () => {
+    setIsOpen(false);
+    navigate("/account?tab=orders");
+  }
 
   const handleLogout = async () => {
     try {
@@ -51,24 +62,9 @@ const UserDropdown = ({children}: Props) => {
       `}>
         <Container>
           <div className="flex flex-col gap-1 py-1">
-            <button className="w-full hover:bg-black/5 dark:hover:bg-white/3 transition" onClick={() => { 
-              setIsOpen(false);
-              navigate("/profile");
-            }}>
-              <div className="flex items-left px-5 pr-6 py-2">
-                <User className="size-5 mr-2" />
-                <span>Profile</span>
-              </div>
-            </button>
-
-            <button className="w-full hover:bg-black/5 dark:hover:bg-white/3 transition" onClick={() => {
-              handleLogout();
-            }}>
-              <div className="flex items-center px-5 pr-6 py-2">
-                <LogOut className="size-5 mr-2" />
-                <span>Logout</span>
-              </div>
-            </button>
+            <ButtonHeaderDropDown icon={<User size={19} />} label="Profile" action={() => handleProfile()} />
+            <ButtonHeaderDropDown icon={<ShoppingBag size={19} />} label="Orders" action={() => handleOrders()} />
+            <ButtonHeaderDropDown icon={<LogOut size={19} />} label="Logout" action={() => handleLogout()} />
           </div>
         </Container>
       </div>

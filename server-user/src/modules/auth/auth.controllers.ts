@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { serviceRegister, serviceLogin } from "../services/auth.js";
-import { COOKIE_AUTH_TOKEN } from "../utils/token.js";
+import { COOKIE_AUTH_TOKEN } from "../../utils/token.js";
+import { serviceLogin, serviceRegister } from "./auth.services.js";
 
 async function controllerLogin (req: FastifyRequest, reply: FastifyReply) {
   // @ts-ignore

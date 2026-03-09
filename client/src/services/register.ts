@@ -1,4 +1,5 @@
 import api from "../lib/api";
+import type { APIResponse } from "../lib/api-response";
 import type { UserLogin } from "../types/user";
 
 interface Params {
@@ -9,10 +10,7 @@ interface Params {
 
 async function register(data: Params) {
   const response = await api.post(`/register`, data);
-  if (response.status === 200) return response.data as {
-    data: UserLogin,
-    message: string
-  };
+  if (response.status === 200) return response.data as APIResponse<UserLogin>;
   throw new Error("Register error");
 }
 

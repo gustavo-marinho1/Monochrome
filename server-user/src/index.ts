@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import server from "./server.js";
-import { createTableUser } from "./services/create-table.js";
+import { createTableUser } from './modules/user/user.services.js';
 
 async function start() {
   try {

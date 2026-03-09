@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
-import { controllerMe, controllerGetProfile, controllerChangeName, controllerChangePhoto } from "../controllers/user.js";
-import { authenticate } from "../middlewares/authenticate.js";
+import { authenticate } from "../../middlewares/authenticate.js";
+import { controllerChangeName, controllerChangePhoto, controllerGetProfile, controllerMe } from "./user.controllers.js";
+
 
 export default async function UserRoutes(fastify: FastifyInstance) {
 

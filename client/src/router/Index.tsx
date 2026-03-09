@@ -5,12 +5,12 @@ import Home from "../pages/home/Index"
 import Register from "../pages/auth/register/Index";
 import Error from "../pages/error/Index";
 import Search from "../pages/search/Index";
-import Profile from "../pages/Profile/Index";
+import Account from "../pages/account/Index";
 
 const routeList: RouteObject[] = [
   { path: "/", element: <Home /> },
   { path: "/search", element: <Search /> },
-  { path: "/profile", element: <Profile /> },
+  { path: "/account", element: <Account /> },
 ];
 
 const routes = createBrowserRouter([

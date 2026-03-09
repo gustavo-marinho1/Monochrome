@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
-import type { JWTUser } from "../models/user.js";
 import { COOKIE_AUTH_TOKEN, isTokenValid } from "../utils/token.js";
+import type { JWTUser } from "../modules/auth/auth.model.js";
 
 async function authenticate(req: FastifyRequest, reply: FastifyReply) {
   const token = req.cookies.auth_token;
