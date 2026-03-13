@@ -17,6 +17,8 @@ async function serviceLogin(email: string, password: string) {
 
   const token = await generateToken(user.id, user.email);
 
+  console.log(user)
+
   return {
     user: {
       id: user.id,

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const api_url = import.meta.env.VITE_API_USER_URL;
+const api_url = import.meta.env.VITE_API_PRODUCTS_URL;
 
 const createApi = (contentType: string = 'application/json') => {
-  const api = axios.create({
+  const apiProducts = axios.create({
     baseURL: api_url,
     withCredentials: true,
     headers: {
@@ -11,7 +11,7 @@ const createApi = (contentType: string = 'application/json') => {
     },
   });
 
-  api.interceptors.response.use(
+  apiProducts.interceptors.response.use(
     (response) => response,
     (error) => {
       if (error.response && error.response.data) {
@@ -31,10 +31,9 @@ const createApi = (contentType: string = 'application/json') => {
     }
   );
 
-  return api;
+  return apiProducts;
 };
 
-const api = createApi();
+const apiProducts = createApi();
 
-export default api;
-export const apiMultipart = createApi('multipart/form-data');
+export default apiProducts;

@@ -18,7 +18,7 @@ const SearchSm = () => {
 
   const handleSearch = () => {
     if (search.length <= 0) return
-    navigate(`/search?s=${search}`);
+    navigate(`/search?search=${search}`);
   }
 
   return (
@@ -64,7 +64,7 @@ const SearchMd = () => {
 
   const handleSearch = () => {
     if (search.length <= 0) return
-    navigate(`/search?s=${search}`);
+    navigate(`/search?search=${search}`);
   }
 
   return (
