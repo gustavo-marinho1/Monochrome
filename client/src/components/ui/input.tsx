@@ -47,7 +47,7 @@ export const Input = ({id, name, register, password, label, value, setValue, err
         />
         {password && (
           <div className="absolute top-0 right-0 h-full flex justify-center items-center px-2">
-            <button className="cursor-pointer" onClick={() => setHide(!hide)}>
+            <button type="button" className="cursor-pointer" onClick={() => setHide(!hide)}>
               {hide ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>

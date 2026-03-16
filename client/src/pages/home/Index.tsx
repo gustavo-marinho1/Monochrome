@@ -1,12 +1,12 @@
 //import { ProductCard } from "../../components/products/product-card";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 
 function Home() {
   return (
     <>
       <section>
         <div className="">
-          <Link to="">
+          {/* <Link to="">
             <div className="relative inline dark:hidden flex-[1]">
               <img src="./moon-runner-white.png" className="flex-[1]" />
               <div className="absolute bottom-3 w-full flex flex-col items-center gap-1">
@@ -31,7 +31,7 @@ function Home() {
                 </button>
               </div>
             </div>
-          </Link>
+          </Link> */}
         </div>
       </section>
 

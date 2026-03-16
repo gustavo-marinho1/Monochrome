@@ -10,6 +10,8 @@ import { Photo } from "../profile/photo"
 import { Input } from "../ui/input"
 import { LoadingName } from "../profile/loading-name"
 
+const api_url = import.meta.env.VITE_API_USER_URL;
+
 const buttonStyle = "h-9.5 aspect-square flex items-center justify-center rounded-lg ";
 
 interface Fields {
@@ -52,7 +54,8 @@ const Profile = () => {
     setLoading(true);
     try {
       const res = await getProfile();
-      setAvatarUrl(import.meta.env.VITE_API_URL + "/" + res.data.avatar_url);
+      setAvatarUrl(api_url + "/" + res.data.avatar_url);
+      console.log(api_url + "/" + res.data.avatar_url);
       setName(res.data.name);
       setValue("newName", res.data.name);
       setEmail(res.data.email);
