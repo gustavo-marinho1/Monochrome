@@ -6,6 +6,15 @@ type Product = {
   image: string;
 };
 
+const colors_products = [
+  {value: "black", label: "Black"},
+  {value: "white", label: "White"},
+  {value: "red",   label: "Red"},
+  {value: "green", label: "Green"},
+  {value: "blue",  label: "Blue"},
+  {value: "gray",  label: "Gray"}
+];
+
 const products: Product[] = [
   {
     id: 1,
@@ -65,4 +74,4 @@ const products: Product[] = [
   },
 ];
 
-export { products, type Product }
+export { colors_products, products, type Product }

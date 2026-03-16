@@ -1,5 +1,4 @@
-import { products } from "../../lib/products";
-import { ProductCard } from "../../components/products/product-card";
+//import { ProductCard } from "../../components/products/product-card";
 import { Link } from "react-router-dom";
 
 function Home() {
@@ -38,7 +37,7 @@ function Home() {
 
       <section id="home-products-grid">
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 py-5">
-          {products.map((product) => (
+          {/* {[].map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
@@ -47,7 +46,7 @@ function Home() {
               price={product.price}
               image={product.image}
             />
-          ))}
+          ))} */}
         </div>
       </section>
     </>

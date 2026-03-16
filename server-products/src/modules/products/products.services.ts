@@ -7,8 +7,8 @@ const getProducts = async (filters: FilterProducts) => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const conditions = [];
-  const values = [];
+  const conditions: string[] = [];
+  const values: (string | number)[] = [];
   let paramIndex = 1;
 
   if (search) {
@@ -23,19 +23,20 @@ const getProducts = async (filters: FilterProducts) => {
     paramIndex++;
   }
 
-  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const whereClause = conditions.length > 0
+    ? `WHERE ${conditions.join(' AND ')}`
+    : '';
 
-  const sortOptions = {
+  const sortOptions: Record<string, string> = {
     price_asc:  'ORDER BY price ASC',
     price_desc: 'ORDER BY price DESC',
   };
-  const orderClause = sort ? sortOptions[sort] : sortOptions.price_asc;
+  const orderClause = sort ? sortOptions[sort] : 'ORDER BY id ASC';
 
   values.push(limit, offset);
 
   const query = `
-    SELECT *
-    FROM products
+    SELECT * FROM products
     ${whereClause}
     ${orderClause}
     LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
@@ -48,15 +49,15 @@ const getProducts = async (filters: FilterProducts) => {
 async function createTableProducts() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS products (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      name VARCHAR(255) NOT NULL,
+      id          UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
+      name        VARCHAR(255)   NOT NULL,
       description TEXT,
-      category VARCHAR(255) NOT NULL,
-      colors TEXT[], 
-      images_by_color JSONB,
-      price DECIMAL(10, 2) NOT NULL,
-      stock INT NOT NULL DEFAULT 0,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      category    VARCHAR(255)   NOT NULL,
+      color       VARCHAR(100)   NOT NULL,
+      images      TEXT[]         NOT NULL DEFAULT ARRAY[]::TEXT[],
+      price       DECIMAL(10, 2) NOT NULL,
+      stock       INT            NOT NULL DEFAULT 0,
+      created_at  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
     );
   `);
 }

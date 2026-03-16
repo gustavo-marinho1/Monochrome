@@ -1,14 +1,14 @@
 import { Check, Pen, X } from "lucide-react"
-import { Input } from "../../../components/ui/input"
 import { useEffect, useState } from "react"
-import { changeProfileName, getProfile } from "../../../services/profile"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod"
 import { useNavigate } from "react-router-dom"
-import { Photo } from "../../../components/profile/photo"
-import { InputPhoto } from "../../../components/ui/input-photo"
-import { LoadingName } from "../../../components/profile/loading-name"
+import { changeProfileName, getProfile } from "@/services/profile"
+import { InputPhoto } from "../ui/input-photo"
+import { Photo } from "../profile/photo"
+import { Input } from "../ui/input"
+import { LoadingName } from "../profile/loading-name"
 
 const buttonStyle = "h-9.5 aspect-square flex items-center justify-center rounded-lg ";
 

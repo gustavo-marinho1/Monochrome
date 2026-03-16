@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Profile } from "./tabs/profile";
-import { Orders } from "./tabs/orders";
-import { Saved } from "./tabs/saved";
 import { useNavigate, useParams } from "react-router-dom";
 import { PROFILE, ORDERS, SAVED, buttonStyle, profileActiveStyle, orderActiveStyle, savedActiveStyle } from "../../lib/account-page";
+import { Profile } from "@/components/account/tab-profile";
+import { Orders } from "@/components/account/tab-orders";
+import { Saved } from "@/components/account/tab-saved";
 
 const Account = () => {
   const navigate = useNavigate();

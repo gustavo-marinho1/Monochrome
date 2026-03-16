@@ -2,87 +2,64 @@ import { useState } from 'react'
 import axios from 'axios'
 import './App.css'
 
-interface Product {
+const api_url = import.meta.env.VITE_API_PRODUCTS_URL + "/products";
+
+interface ProductPayload {
   name: string
   description: string
   category: string
-  colors: string[]
-  imagesByColor: Record<string, string[]>
+  color: string
+  images: string[]
   price: number
   stock: number
 }
 
-const initialProduct: Product = {
+interface ProductFormState {
+  name: string
+  description: string
+  category: string
+  color: string
+  images: string[]
+  price: number
+  stock: number
+}
+
+const initialProduct: ProductFormState = {
   name: '',
   description: '',
   category: '',
-  colors: [],
-  imagesByColor: {},
+  color: '',
+  images: [],
   price: 0,
   stock: 0,
 }
 
 function App() {
-  const [product, setProduct] = useState<Product>(initialProduct)
+  const [product, setProduct] = useState<ProductFormState>(initialProduct)
   const [output, setOutput] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [newColor, setNewColor] = useState('')
-  const [newImageUrls, setNewImageUrls] = useState<Record<string, string>>({})
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [newImageUrl, setNewImageUrl] = useState('')
 
-  const updateField = <K extends keyof Product>(
+  const updateField = <K extends keyof ProductFormState>(
     field: K,
-    value: Product[K]
+    value: ProductFormState[K]
   ) => {
     setProduct((prev) => ({ ...prev, [field]: value }))
   }
 
-  const addColor = () => {
-    const color = newColor.trim().toLowerCase()
-    if (!color) return
-    if (product.colors.includes(color)) {
-      alert('Essa cor já foi adicionada.')
-      return
-    }
-    setProduct((prev) => ({
-      ...prev,
-      colors: [...prev.colors, color],
-      imagesByColor: { ...prev.imagesByColor, [color]: [] },
-    }))
-    setNewColor('')
-  }
-
-  const removeColor = (color: string) => {
-    setProduct((prev) => {
-      const { [color]: _, ...rest } = prev.imagesByColor
-      return {
-        ...prev,
-        colors: prev.colors.filter((c) => c !== color),
-        imagesByColor: rest,
-      }
-    })
-  }
-
-  const addImage = (color: string) => {
-    const url = (newImageUrls[color] ?? '').trim()
+  const addImage = () => {
+    const url = newImageUrl.trim()
     if (!url) return
-    setProduct((prev) => ({
-      ...prev,
-      imagesByColor: {
-        ...prev.imagesByColor,
-        [color]: [...(prev.imagesByColor[color] ?? []), url],
-      },
-    }))
-    setNewImageUrls((prev) => ({ ...prev, [color]: '' }))
+    setProduct((prev) => ({ ...prev, images: [...prev.images, url] }))
+    setNewImageUrl('')
   }
 
-  const removeImage = (color: string, index: number) => {
+  const removeImage = (index: number) => {
     setProduct((prev) => ({
       ...prev,
-      imagesByColor: {
-        ...prev.imagesByColor,
-        [color]: prev.imagesByColor[color].filter((_, i) => i !== index),
-      },
+      images: prev.images.filter((_, i) => i !== index),
     }))
   }
 
@@ -90,32 +67,52 @@ function App() {
     e.preventDefault()
     setSubmitError(null)
     setOutput(null)
+    setSubmitSuccess(null)
+
+    const color = product.color.trim().toLowerCase()
+    if (!color) {
+      setSubmitError('Color is required.')
+      return
+    }
+    if (product.images.length === 0) {
+      setSubmitError('At least one image is required.')
+      return
+    }
+
     setIsSubmitting(true)
-    const payload: Product = {
-      ...product,
+    const payload: ProductPayload = {
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      color,
+      images: product.images,
       price: Number(product.price) || 0,
       stock: Number(product.stock) || 0,
     }
 
-    const body = JSON.stringify(payload)
+    const body = JSON.stringify(payload, null, 2)
+    setOutput(body)
 
     try {
-      const res = await axios.post('http://localhost:3002/products', body, {
+      await axios.post(api_url, body, {
         headers: { 'Content-Type': 'application/json' },
-      });
-      console.log(res);
+      })
+      setSubmitSuccess('Product submitted successfully.')
+      setProduct(initialProduct)
+      setNewImageUrl('')
     } catch (error) {
-      console.log(error);
+      setSubmitError(error instanceof Error ? error.message : String(error))
+    } finally {
+      setIsSubmitting(false)
     }
-    setIsSubmitting(false)
   }
 
   return (
     <main className="app">
-      <h1>Adicionar produto</h1>
-      <form onSubmit={handleSubmit} className="form">
+      <h1>Add product</h1>
+      <form onSubmit={handleSubmit} className="form" style={{ paddingBottom: 30 }}>
         <label>
-          Nome
+          Name
           <input
             type="text"
             value={product.name}
@@ -124,7 +121,7 @@ function App() {
           />
         </label>
         <label>
-          Descrição
+          Description
           <input
             type="text"
             value={product.description}
@@ -133,7 +130,7 @@ function App() {
           />
         </label>
         <label>
-          Categoria
+          Category
           <input
             type="text"
             value={product.category}
@@ -142,59 +139,44 @@ function App() {
           />
         </label>
 
+        <label>
+          Color
+          <input
+            type="text"
+            placeholder="e.g. black"
+            value={product.color}
+            onChange={(e) => updateField('color', e.target.value)}
+            required
+          />
+        </label>
+
         <fieldset className="colors-field">
-          <legend>Cores e imagens</legend>
-          <div className="add-color-row">
+          <legend>Images (at least one required)</legend>
+          <ul className="image-list">
+            {product.images.map((url, i) => (
+              <li key={i}>
+                <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                <button type="button" onClick={() => removeImage(i)} className="btn btn-remove-small">
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="add-image-row">
             <input
               type="text"
-              placeholder="Nova cor (ex: black)"
-              value={newColor}
-              onChange={(e) => setNewColor(e.target.value)}
+              placeholder="Image URL"
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
             />
-            <button type="button" onClick={addColor} className="btn btn-add">
-              + Adicionar cor
+            <button type="button" onClick={addImage} className="btn btn-add-small">
+              + Image
             </button>
           </div>
-          {product.colors.map((color) => (
-            <div key={color} className="color-block">
-              <div className="color-header">
-                <strong>{color}</strong>
-                <button type="button" onClick={() => removeColor(color)} className="btn btn-remove">
-                  Remover cor
-                </button>
-              </div>
-              <ul className="image-list">
-                {(product.imagesByColor[color] ?? []).map((url, i) => (
-                  <li key={`${color}-${i}`}>
-                    <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
-                    <button type="button" onClick={() => removeImage(color, i)} className="btn btn-remove-small">
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <div className="add-image-row">
-                <input
-                  type="text"
-                  placeholder="URL da imagem"
-                  value={newImageUrls[color] ?? ''}
-                  onChange={(e) =>
-                    setNewImageUrls((prev) => ({
-                      ...prev,
-                      [color]: e.target.value,
-                    }))
-                  }
-                />
-                <button type="button" onClick={() => addImage(color)} className="btn btn-add-small">
-                  + Imagem
-                </button>
-              </div>
-            </div>
-          ))}
         </fieldset>
 
         <label>
-          Preço
+          Price
           <input
             type="number"
             step="0.01"
@@ -207,7 +189,7 @@ function App() {
           />
         </label>
         <label>
-          Estoque
+          Stock
           <input
             type="number"
             min="0"
@@ -220,21 +202,28 @@ function App() {
         </label>
 
         <button type="submit" className="btn btn-submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Enviando...' : 'Gerar objeto e enviar'}
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
 
       {submitError && (
-        <section className="output">
-          <h2>Erro ao enviar</h2>
+        <section className="">
+          <h2>Submit error</h2>
           <pre>{submitError}</pre>
         </section>
       )}
 
       {output && (
-        <section className="output">
-          <h2>Resultado</h2>
+        <section className="">
+          <h2>Result</h2>
           <pre>{output}</pre>
+        </section>
+      )}
+
+      {submitSuccess && (
+        <section className="">
+          <h2>Success</h2>
+          <p>{submitSuccess}</p>
         </section>
       )}
     </main>

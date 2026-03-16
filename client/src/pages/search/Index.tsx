@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { products } from "../../lib/products";
 import { ProductsEmpty } from "../../components/products/empty";
 import { ProductsLoading } from "../../components/products/loading";
 import { ProdutsResults } from "../../components/products/results";
 import type { FilterSearch } from "../../lib/search";
 import apiProducts from "../../lib/api-products";
+import { ModalFilter } from "@/components/search/modal-filter";
+import { Pagination } from "@/components/search/pagination";
 
 function Search() {
   const p = useParams();
   const params = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [products, setProducts] = useState([]);
 
-  const [filters, setFilters] = useState<FilterSearch>({
+  const [filter, setFilter] = useState<FilterSearch>({
     search: "",
     page: Number(params.get("page")) || 1,
-    color: "",
-    sort: "price_asc"
+    color: null,
+    sort: null
   });
 
   useEffect(() => {
@@ -27,11 +29,11 @@ function Search() {
     const sortParams = params.get("sort");
 
     if (searchParams) {
-      setFilters({
+      setFilter({
         search: searchParams,
         page: Number(pageParams) || 1,
-        color: colorParams || "",
-        sort: sortParams === "price_desc" ? "price_desc" : "price_asc"
+        color: colorParams || null,
+        sort: sortParams === "price_desc" && "price_desc" || sortParams === "price_asc" && "price_asc" || null
       });
     }
     else
@@ -39,17 +41,35 @@ function Search() {
   }, [p]);
 
   useEffect(() => {
-    if (filters.search) {
-      getProducts();
-    }
-  }, [filters]);
+    if (filter.search) getProducts();
+  }, [filter]);
+
+  const changeFilter = (color: string | null, sort: string | null) => {
+    if (color === filter.color && sort === filter.sort) return;
+    const filterColor = color ? `&color=${color}` : ``;
+    const filterSort = sort ? `&sort=${sort}` : ``;
+    navigate(`/search?search=${filter.search}&page=${filter.page}` + filterColor + filterSort);
+  }
+
+  const changePage = (page: number) => {
+    const color = filter.color ? `&color=${filter.color}` : ``;
+    const sort = filter.sort ? `&sort=${filter.sort}` : ``;
+    navigate(`/search?search=${filter.search}&page=${page}` + color + sort);
+  }
 
   const getProducts = async () => {
     setLoading(true);
     try {
-      const res = await apiProducts.get(`/products?search=${filters.search}&page=${filters.page}&color=${filters.color}&sort=${filters.sort}`);
+      const res = await apiProducts.get(`/products`, {
+        params: {
+          search: filter.search,
+          page: filter.page,
+          color: filter.color,
+          sort: filter.sort
+        }
+      });
       if (res.status === 200) {
-        console.log(res.data);
+        setProducts(res.data);
       }
     } catch (error: Error | any) {
       console.log(error);
@@ -60,22 +80,27 @@ function Search() {
     }
   }
 
-  //navigate(`/search?search=${filters.search}&page=${filters.page}&color=${filters.color}&sort=${filters.sort}`);
-
   return (
     <div className="flex-[1] pt-8">
       {loading ? (
         <ProductsLoading />
       ) : (
         products.length == 0 ? (
-          <ProductsEmpty search={filters.search} />
+          <ProductsEmpty search={filter.search} />
         ) : (
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg mb-4">{filters.search}</h2>
-              <div>Filter</div>
+
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg">{filter.search}</h2>
+              <div>
+                <ModalFilter filter={filter} changeFilter={changeFilter} disabled={loading} />
+              </div>
             </div>
+
             <ProdutsResults products={products} />
+
+            <Pagination page={filter.page || 1} setPage={changePage} disabled={loading} />
+
           </div>
         )
       )}
