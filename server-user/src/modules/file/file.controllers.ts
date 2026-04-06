@@ -19,10 +19,7 @@ async function controllerPostProfilePhoto(req: FastifyRequest, reply: FastifyRep
 
     reply
       .status(200)
-      .send({ 
-        message: 'New profile photo',
-        data: photoSrc
-      });
+      .send({ message: 'New profile photo', data: photoSrc });
   }
   catch (error: Error | any) {
     reply

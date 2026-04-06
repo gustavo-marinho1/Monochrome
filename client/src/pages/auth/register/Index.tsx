@@ -1,9 +1,8 @@
 import { ThemeToggle } from "../../../components/ui/theme-toggle";
 import { MainAuth } from "../../../components/layout/main";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
-import { UserContext } from "../../../contexts/user-context";
-import { register } from "../../../services/register";
+import { useState } from "react";
+import { register } from "../../../services/auth";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,11 +22,10 @@ const schema = z.object({
 });
 
 export default function Register() {
-
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const { setUser } = useContext(UserContext);
+
   const { watch, setValue, handleSubmit, formState: { errors } } = useForm<Fields>({
     resolver: zodResolver(schema)
   });
@@ -36,8 +34,7 @@ export default function Register() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const res = await register(values);
-      setUser(res.data);
+      await register(values);
       navigate("/");
     }
     catch (error: Error | any) {
@@ -117,7 +114,9 @@ export default function Register() {
 
             <div className="w-full flex justify-between items-center gap-2">
               <Link to="/login" className="hover:underline">Already have an account?</Link>
-              <button disabled={loading} className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-700 rounded-lg py-1.5 px-3">Register</button>
+              <button disabled={loading} className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-700 rounded-md py-1.5 px-3">
+                Register
+              </button>
             </div>
           </form>
         </Container>

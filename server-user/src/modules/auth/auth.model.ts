@@ -1,8 +1,17 @@
 interface JWTUser {
-  id: number,
+  id: string,
   email: string,
   iat: number,
   exp: number,
 }
 
-export type { JWTUser }
+interface RefreshTokenDB {
+  id: string,
+  user_id: string,
+  token: string,
+  expires_at: string,
+  created_at: string,
+  revoked_at: string
+}
+
+export type { JWTUser, RefreshTokenDB }

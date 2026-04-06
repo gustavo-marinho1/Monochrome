@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { LogOut, ShoppingBag, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Container } from '../layout/container';
-import { logout } from '../../services/logout';
+import { logout } from '../../services/auth';
 import { ButtonHeaderDropDown } from './buttons-header';
 
 interface Props {
@@ -54,7 +54,7 @@ const UserDropdown = ({children}: Props) => {
 
       {/* Dropdown */}
       <div className={`
-        absolute right-0 top-0 mt-6 shadow-lg transition-all duration-200 ease-out
+        absolute right-0 top-0 mt-6 shadow-lg transition-all duration-200 ease-out rounded-lg
         ${isOpen
           ? 'transform opacity-100 scale-100 translate-y-0 pointer-events-auto' 
           : 'transform opacity-0 scale-95 -translate-y-2 pointer-events-none'

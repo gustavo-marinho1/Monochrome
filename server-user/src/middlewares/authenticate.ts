@@ -1,29 +1,30 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
-import { COOKIE_AUTH_TOKEN, isTokenValid } from "../utils/token.js";
+import { isAccessTokenValid } from "../utils/token.js";
 import type { JWTUser } from "../modules/auth/auth.model.js";
 
 async function authenticate(req: FastifyRequest, reply: FastifyReply) {
-  const token = req.cookies.auth_token;
-  if (!token) {
-    reply
-      .status(401)
-      .clearCookie(COOKIE_AUTH_TOKEN)
-      .send({ message: "Token not provided", data: undefined});
-    return
+  const auth = req.headers['authorization'];
+
+  if (!auth) {
+    return reply.status(401).send({ message: "Token not provided", data: undefined });
   }
 
-  const valid = isTokenValid(token);
-  if (!valid) {
-    reply
-      .status(401)
-      .clearCookie(COOKIE_AUTH_TOKEN)
-      .send({ message: "Token not valid", data: undefined, redirect: "/login" });
-    return
+  const accessToken = auth.split(' ')[1];
+
+  if (!accessToken) {
+    return reply.status(401).send({ message: "Token not provided", data: undefined });
   }
 
-  const decodedJwt = jwt.verify(token, String(process.env.JWT_SECRET)) as JWTUser;
-  req.user = decodedJwt;
+  try {
+    const decodedJwt = jwt.verify(
+      accessToken,
+      String(process.env.ACCESS_SECRET)
+    ) as JWTUser;
+    req.user = decodedJwt;
+  } catch {
+    return reply.status(401).send({ message: 'Token not valid', data: undefined });
+  }
 }
 
 export { authenticate }

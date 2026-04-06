@@ -1,7 +1,7 @@
 import pool from "../../config/db.js";
 import type { User } from "../user/user.model.js";
 
-async function serviceSaveProfilePhoto(id: number, photo_url: string) {
+async function serviceSaveProfilePhoto(id: string, photo_url: string) {
   const res = await pool.query("SELECT id FROM users WHERE id = $1", [id]);
   const user: User = res.rows[0];
   if (!user) throw new Error("User not found");

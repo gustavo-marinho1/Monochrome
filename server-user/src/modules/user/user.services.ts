@@ -2,7 +2,7 @@ import pool from "../../config/db.js";
 import type { User } from "./user.model.js";
 
 
-async function serviceGetMeInfo(id: number) {
+async function serviceGetMeInfo(id: string) {
   const res = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [id]);
   const user: User = res.rows[0];
   if (!user) throw new Error("User not found");
@@ -13,7 +13,7 @@ async function serviceGetMeInfo(id: number) {
   };
 }
 
-async function serviceGetProfile(id: number) {
+async function serviceGetProfile(id: string) {
   const res = await pool.query("SELECT id, name, email, avatar_url, created_at FROM users WHERE id = $1", [id]);
   const user: User = res.rows[0];
   if (!user) throw new Error("User not found");
@@ -26,24 +26,17 @@ async function serviceGetProfile(id: number) {
   };
 }
 
-async function serviceChangeName(id: number, name: string) {
+async function serviceChangeName(id: string, name: string) {
   const res = await pool.query("SELECT id FROM users WHERE id = $1", [id]);
   const user: User = res.rows[0];
   if (!user) throw new Error("User not found");
   await pool.query("UPDATE users SET name = $1 WHERE id = $2", [name, id]);
 }
 
-async function serviceChangePhoto(id: number, photo: string) {
-  const res = await pool.query("SELECT id FROM users WHERE id = $1", [id]);
-  const user: User = res.rows[0];
-  if (!user) throw new Error("User not found");
-  await pool.query("UPDATE users SET avatar_url = $1 WHERE id = $2", [photo, id]);
-}
-
 async function createTableUser() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       name VARCHAR(100) NOT NULL,
       email VARCHAR(150) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
@@ -53,4 +46,4 @@ async function createTableUser() {
   `);
 }
 
-export { serviceGetMeInfo, serviceGetProfile, serviceChangeName, serviceChangePhoto, createTableUser }
+export { serviceGetMeInfo, serviceGetProfile, serviceChangeName, createTableUser }

@@ -39,7 +39,7 @@ export const Input = ({id, name, register, password, label, value, setValue, err
             if (setValue) setValue(e.target.value);
           }}
           className={`
-            w-full h-9.5 rounded-lg border border-neutral-400/80 dark:border-neutral-500/70 px-2
+            w-full h-9.5 rounded-sm border border-neutral-400/80 dark:border-neutral-500/70 px-2
           `}
           style={{
             borderColor: error ? "rgb(255,80,80)" : ""

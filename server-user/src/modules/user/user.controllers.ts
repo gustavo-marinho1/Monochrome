@@ -8,7 +8,7 @@ async function controllerMe (req: FastifyRequest, reply: FastifyReply) {
     const data = await serviceGetMeInfo(id);
     reply
       .status(200)
-      .send({ message: "Me", data: data});
+      .send({ message: "Me", data: data });
   }
   catch (error: Error | any) {
     reply
@@ -20,9 +20,9 @@ async function controllerMe (req: FastifyRequest, reply: FastifyReply) {
 async function controllerGetProfile (req: FastifyRequest, reply: FastifyReply) {
   try {
     if (!req.user) throw new Error("Error authentication");
+    console.log(req.user);
     const id = req.user.id;
     const data = await serviceGetProfile(id);
-    console.log(data.avatar_url);
     reply
       .status(200)
       .send({ message: "Profile", data: data});
@@ -39,6 +39,8 @@ async function controllerChangeName (req: FastifyRequest, reply: FastifyReply) {
   const { name } = req.body;
   try {
     if (!req.user) throw new Error("Error authentication");
+    console.log(req.user);
+    console.log(name);
     if (!name) throw new Error("Name not provided");
     await serviceChangeName(req.user.id, name);
     reply
@@ -52,23 +54,4 @@ async function controllerChangeName (req: FastifyRequest, reply: FastifyReply) {
   }
 }
 
-async function controllerChangePhoto (req: FastifyRequest, reply: FastifyReply) {
-  // @ts-ignore
-  const { photo } = req.body;
-  try {
-    if (!req.user) throw new Error("Authentication error");
-    if (!photo) throw new Error("Photo not provided");
-    console.log(photo);
-    //await serviceChangePhoto(req.user.id, avatar_url);
-    reply
-      .status(200)
-      .send({ message: "Photo changed", data: true});
-  }
-  catch (error: Error | any) {
-    reply
-      .status(401)
-      .send({ message: error.message, data: undefined });
-  }
-}
-
-export { controllerMe, controllerGetProfile, controllerChangeName, controllerChangePhoto }
+export { controllerMe, controllerGetProfile, controllerChangeName }

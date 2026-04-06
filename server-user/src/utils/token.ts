@@ -1,16 +1,29 @@
 import jwt from "jsonwebtoken";
 
-const COOKIE_AUTH_TOKEN = "auth_token";
+const COOKIE_ACCESS_TOKEN = "access_token";
+const COOKIE_REFRESH_TOKEN = "refresh_token"
 
-async function generateToken(id: number, email: string) {
-  return jwt.sign({id, email}, String(process.env.JWT_SECRET), {
-    expiresIn: "1day"
-  });
+async function generateAccessToken(id: string) {
+  const accessToken = jwt.sign(
+    {id},
+    String(process.env.ACCESS_SECRET),
+    { expiresIn: '1m' }
+  );
+  return accessToken;
 }
 
-const isTokenValid = (token: string) => {
+async function generateRefreshToken(id: string) {
+  const refreshToken = jwt.sign(
+    {id},
+    String(process.env.REFRESH_SECRET),
+    { expiresIn: '10m' }
+  );
+  return refreshToken;
+}
+
+const isAccessTokenValid = (token: string) => {
   try {
-    jwt.verify(token, String(process.env.JWT_SECRET));
+    jwt.verify(token, String(process.env.ACCESS_SECRET));
     return true
   }
   catch (error) {
@@ -18,4 +31,18 @@ const isTokenValid = (token: string) => {
   }
 };
 
-export { generateToken, isTokenValid, COOKIE_AUTH_TOKEN }
+const isRefreshTokenValid = (token: string) => {
+  try {
+    jwt.verify(token, String(process.env.REFRESH_SECRET));
+    return true
+  }
+  catch (error) {
+    return false
+  }
+};
+
+export {
+  generateAccessToken, generateRefreshToken,
+  isAccessTokenValid, isRefreshTokenValid,
+  COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN
+}

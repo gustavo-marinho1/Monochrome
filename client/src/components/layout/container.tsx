@@ -9,7 +9,7 @@ const Container = ({children, size, rounded}: Props) => {
     <div className={`
       bg-white dark:bg-neutral-900 border border-neutral-300/70 dark:border-neutral-700/80 overflow-hidden
       ${size ? size : ""}
-      ${rounded ? rounded : "rounded-xl"}
+      ${rounded ? rounded : "rounded-lg"}
     `}>
       {children}
     </div>

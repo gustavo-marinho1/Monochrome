@@ -24,7 +24,7 @@ const schema = z.object({
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [avatar_url, setAvatarUrl] = useState<string>("");
+  const [avatar_url, setAvatarUrl] = useState<string>();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [isEditName, setIsEditName] = useState<boolean>(false);
@@ -54,8 +54,8 @@ const Profile = () => {
     setLoading(true);
     try {
       const res = await getProfile();
-      setAvatarUrl(api_url + "/" + res.data.avatar_url);
-      console.log(api_url + "/" + res.data.avatar_url);
+      if (res.data.avatar_url) setAvatarUrl(api_url + "/" + res.data.avatar_url);
+      else setAvatarUrl(undefined);
       setName(res.data.name);
       setValue("newName", res.data.name);
       setEmail(res.data.email);

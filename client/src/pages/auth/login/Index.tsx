@@ -1,11 +1,10 @@
 import { ThemeToggle } from "../../../components/ui/theme-toggle";
 import { MainAuth } from "../../../components/layout/main";
-import { login } from "../../../services/login";
+import { login } from "../../../services/auth";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useState } from "react";
-import { UserContext } from "../../../contexts/user-context";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../../../components/ui/input";
 import { Container } from "../../../components/layout/container";
@@ -21,11 +20,10 @@ const schema = z.object({
 });
 
 export default function Login() {
-
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const { setUser } = useContext(UserContext);
+
   const { watch, setValue, handleSubmit, formState: { errors } } = useForm<Fields>({
     resolver: zodResolver(schema)
   });
@@ -34,8 +32,7 @@ export default function Login() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const res = await login(values);
-      setUser(res.data);
+      await login(values);
       navigate("/");
     }
     catch (error: Error | any) {
@@ -104,7 +101,7 @@ export default function Login() {
 
             <div className="w-full flex justify-between items-center gap-4">
               <Link to="/register" className="hover:underline">Create account</Link>
-              <button disabled={loading} className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-700 rounded-lg py-1.5 px-3">Login</button>
+              <button disabled={loading} className="bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700/30 border border-neutral-400 dark:border-neutral-700 rounded-md py-1.5 px-3">Login</button>
             </div>
           </form>
         </Container>
