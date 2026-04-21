@@ -5,18 +5,18 @@ const COOKIE_REFRESH_TOKEN = "refresh_token"
 
 async function generateAccessToken(id: string) {
   const accessToken = jwt.sign(
-    {id},
+    { id },
     String(process.env.ACCESS_SECRET),
-    { expiresIn: '1m' }
+    { expiresIn: '15minutes' }
   );
   return accessToken;
 }
 
 async function generateRefreshToken(id: string) {
   const refreshToken = jwt.sign(
-    {id},
+    { id },
     String(process.env.REFRESH_SECRET),
-    { expiresIn: '10m' }
+    { expiresIn: '1week' }
   );
   return refreshToken;
 }
